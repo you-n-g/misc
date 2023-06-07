@@ -1,3 +1,5 @@
 # Requirements for runtime.
+loguru
 pydantic
 typer[all]
+wan @ git+https://github.com/you-n-g/wan.git@master
