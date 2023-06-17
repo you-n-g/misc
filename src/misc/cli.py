@@ -1,8 +1,9 @@
 """Command Line Interface."""
-import typer
-import wan
 import time
 from pathlib import Path
+
+import typer
+import wan
 from loguru import logger
 
 app = typer.Typer()
@@ -22,6 +23,13 @@ def check_health(p: Path) -> None:
         wan.ntf(info)
     else:
         logger.info("It is edited recently")
+
+
+@app.command()
+def start_teleread() -> None:
+    from misc.teleread.server import start_client
+
+    start_client()
 
 
 typer_click_object = typer.main.get_command(app)
