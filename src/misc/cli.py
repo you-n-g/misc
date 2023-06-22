@@ -1,6 +1,7 @@
 """Command Line Interface."""
 import time
 from pathlib import Path
+from typing import Optional
 
 import typer
 import wan
@@ -26,10 +27,13 @@ def check_health(p: Path) -> None:
 
 
 @app.command()
-def start_teleread() -> None:
-    from misc.teleread.server import start_client
+def start_teleread(channel: str, dirname: str, reg: Optional[str] = None, watch: bool = True) -> None:
+    from misc.teleread.server import FileManager
 
-    start_client()
+    if watch:
+        FileManager(channel, dirname, reg).start()
+    else:
+        FileManager(channel, dirname, reg).update()
 
 
 typer_click_object = typer.main.get_command(app)
