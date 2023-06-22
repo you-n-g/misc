@@ -6,6 +6,7 @@ from typing import Optional
 import typer
 import wan
 from loguru import logger
+from misc.incu.pack import locate_pack
 
 app = typer.Typer()
 
@@ -34,6 +35,10 @@ def start_teleread(channel: str, dirname: str, reg: Optional[str] = None, watch:
         FileManager(channel, dirname, reg).start()
     else:
         FileManager(channel, dirname, reg).update()
+
+@app.command()
+def locate(module: str) -> None:
+    locate_pack(module)
 
 
 typer_click_object = typer.main.get_command(app)
