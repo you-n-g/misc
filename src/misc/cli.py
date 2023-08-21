@@ -20,8 +20,8 @@ def run() -> None:
 @app.command()
 def check_health(p: Path) -> None:
     """
-    check the health of a specific service
-    - the file should be edited in last 5 hours fi the service is alive
+    Check the health of a specific service
+    - the file should be edited in last 5 hours fi the service is alive.
     """
     if p.stat().st_mtime < time.time() - 5 * 3600:
         info = f"{p} is not edited for at least 5 hours"
@@ -38,7 +38,7 @@ def start_teleread(
     reg: Optional[str] = None,
     watch: bool = True,
 ) -> None:
-    """tele read service"""
+    """Tele read service."""
     from misc.teleread.server import FileManager
 
     if watch:
@@ -49,13 +49,13 @@ def start_teleread(
 
 @app.command()
 def locate(module: str) -> None:
-    """Locate a package to find where it is installed"""
+    """Locate a package to find where it is installed."""
     locate_pack(module)
 
 
 @app.command()
 def notion_routine():
-    """Routines for my notion"""
+    """Routines for my notion."""
     import requests
     from settings import NOTIONSETTINGS
 
@@ -66,9 +66,9 @@ def notion_routine():
 
         res = requests.patch(edit_url, headers=headers, json=payload)
         if res.status_code == 200:
-            print(f"{res.status_code}: Page edited successfully")
+            logger.info(f"{res.status_code}: Page edited successfully")
         else:
-            print(f"{res.status_code}: Error during page editing")
+            logger.info(f"{res.status_code}: Error during page editing")
         return res
 
     headers = {
@@ -79,9 +79,7 @@ def notion_routine():
 
     import datetime
 
-    cn_time_str = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).strftime(
-        "%Y-%m-%d",
-    )
+    cn_time_str = (datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(hours=8)).strftime("%Y-%m-%d")
 
     def get_text(text=""):
         return {
