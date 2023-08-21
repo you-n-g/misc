@@ -19,7 +19,10 @@ def run() -> None:
 
 @app.command()
 def check_health(p: Path) -> None:
-    # the file should be edited in last 5 hours
+    """
+    check the health of a specific service
+    - the file should be edited in last 5 hours fi the service is alive
+    """
     if p.stat().st_mtime < time.time() - 5 * 3600:
         info = f"{p} is not edited for at least 5 hours"
         logger.info(info)
@@ -35,6 +38,7 @@ def start_teleread(
     reg: Optional[str] = None,
     watch: bool = True,
 ) -> None:
+    """tele read service"""
     from misc.teleread.server import FileManager
 
     if watch:
@@ -45,11 +49,13 @@ def start_teleread(
 
 @app.command()
 def locate(module: str) -> None:
+    """Locate a package to find where it is installed"""
     locate_pack(module)
 
 
 @app.command()
 def notion_routine():
+    """Routines for my notion"""
     import requests
     from settings import NOTIONSETTINGS
 
