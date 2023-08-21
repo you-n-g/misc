@@ -33,15 +33,27 @@ class TeleRead(BaseSettings):
     data_dir: str
 
 
+class Notion(BaseSettings):
+    secrets: str
+    page_id: str  # the page to be edited
+    page_pos_id: str  # the position of the page to be edited
+
+
 #: Instance for project specific settings.
 settings = Settings()
 
 #: Instance for system level settings.
 global_settings = GlobalSettings()
 
-_env_file = "~/.dotfiles/.teleread"
-if Path(_env_file).expanduser().exists():
-    logging.warning(f"loading environtment file from `{_env_file}`")
-else:
-    _env_file = None
-TELEREADSETTINGS = TeleRead(_env_file=_env_file)
+
+def get_env_file(name):
+    _env_file = f"~/.dotfiles/{name}"
+    if Path(_env_file).expanduser().exists():
+        logging.warning(f"loading environtment file from `{_env_file}`")
+    else:
+        _env_file = None
+    return _env_file
+
+
+TELEREADSETTINGS = TeleRead(_env_file=get_env_file(".teleread"))
+NOTIONSETTINGS = Notion(_env_file=get_env_file(".notion"))

@@ -36,9 +36,64 @@ def start_teleread(channel: str, dirname: str, reg: Optional[str] = None, watch:
     else:
         FileManager(channel, dirname, reg).update()
 
+
 @app.command()
 def locate(module: str) -> None:
     locate_pack(module)
+
+
+@app.command()
+def notion_routine():
+    import requests
+    from settings import NOTIONSETTINGS
+
+    def edit_page(page_block_id, data: dict):
+        edit_url = f"https://api.notion.com/v1/blocks/{page_block_id}/children"
+
+        payload = data
+
+        res = requests.patch(edit_url, headers=headers, json=payload)
+        if res.status_code == 200:
+            print(f"{res.status_code}: Page edited successfully")
+        else:
+            print(f"{res.status_code}: Error during page editing")
+        return res
+
+    headers = {
+        "Authorization": "Bearer " + NOTIONSETTINGS.secrets,
+        "Content-Type": "application/json",
+        "Notion-Version":
+            "2022-06-28",  # Check what is the latest version here: https://developers.notion.com/reference/changes-by-version
+    }
+
+    import datetime
+    cn_time_str = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).strftime("%Y-%m-%d")
+
+    def get_text(text=""):
+        return {
+            "object": "block",
+            "type": "paragraph",
+            "paragraph": {
+                "rich_text": [{
+                    "type": "text",
+                    "text": {
+                        "content": text,
+                    },
+                },]
+            },
+        }
+
+    blocks = {
+        "children": [
+            get_text(f"## {cn_time_str}"),
+            get_text(),
+        ],
+        "after": NOTIONSETTINGS.page_pos_id,  # adjusting the position of the content.
+    }
+    # NOTE: Notino's will add part of the page name into url. But it is not the page id.
+    page_block_id = NOTIONSETTINGS.page_id
+
+    edit_page(page_block_id, blocks)
 
 
 typer_click_object = typer.main.get_command(app)
