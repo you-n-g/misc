@@ -19,8 +19,8 @@ def run() -> None:
 
 @app.command()
 def check_health(p: Path) -> None:
-    """
-    Check the health of a specific service
+    """Check the health of a specific service
+
     - the file should be edited in last 5 hours fi the service is alive.
     """
     if p.stat().st_mtime < time.time() - 5 * 3600:
@@ -54,12 +54,18 @@ def locate(module: str) -> None:
 
 
 @app.command()
-def notion_routine():
+def notion_routine() -> None:
     """Routines for my notion."""
     import requests
     from settings import NOTIONSETTINGS
 
-    def edit_page(page_block_id, data: dict):
+    headers = {
+        "Authorization": "Bearer " + NOTIONSETTINGS.secrets,
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28",  # Check what is the latest version here: https://developers.notion.com/reference/changes-by-version
+    }
+
+    def edit_page(page_block_id: str, data: dict) -> None:
         edit_url = f"https://api.notion.com/v1/blocks/{page_block_id}/children"
 
         payload = data
@@ -69,19 +75,14 @@ def notion_routine():
             logger.info(f"{res.status_code}: Page edited successfully")
         else:
             logger.info(f"{res.status_code}: Error during page editing")
-        return res
-
-    headers = {
-        "Authorization": "Bearer " + NOTIONSETTINGS.secrets,
-        "Content-Type": "application/json",
-        "Notion-Version": "2022-06-28",  # Check what is the latest version here: https://developers.notion.com/reference/changes-by-version
-    }
 
     import datetime
 
-    cn_time_str = (datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(hours=8)).strftime("%Y-%m-%d")
+    cn_time_str = (
+        datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(hours=8)
+    ).strftime("%Y-%m-%d")
 
-    def get_text(text=""):
+    def get_text(text: str = "") -> dict:
         return {
             "object": "block",
             "type": "paragraph",

@@ -46,7 +46,7 @@ settings = Settings()
 global_settings = GlobalSettings()
 
 
-def get_env_file(name):
+def get_env_file(name: str) -> Optional[str]:
     _env_file = f"~/.dotfiles/{name}"
     if Path(_env_file).expanduser().exists():
         logging.warning(f"loading environtment file from `{_env_file}`")
