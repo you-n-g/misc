@@ -19,7 +19,7 @@ def run() -> None:
 
 @app.command()
 def check_health(p: Path) -> None:
-    """Check the health of a specific service
+    """Check the health of a specific service.
 
     - the file should be edited in last 5 hours fi the service is alive.
     """
@@ -70,7 +70,7 @@ def notion_routine() -> None:
 
         payload = data
 
-        res = requests.patch(edit_url, headers=headers, json=payload)
+        res = requests.patch(edit_url, headers=headers, json=payload, timeout=30)
         if res.status_code == 200:
             logger.info(f"{res.status_code}: Page edited successfully")
         else:
