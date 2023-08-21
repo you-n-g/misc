@@ -1,7 +1,8 @@
 import importlib
-from pathlib import Path
 import site
 import sys
+from pathlib import Path
+
 
 def locate_pack(module: str) -> None:
     print("Check your sys.path first")
