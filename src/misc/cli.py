@@ -72,7 +72,7 @@ def notion_routine() -> None:
         payload = data
 
         res = requests.patch(edit_url, headers=headers, json=payload, timeout=30)
-        if res.status_code == 200:
+        if res.ok:
             logger.info(f"{res.status_code}: Page edited successfully")
         else:
             logger.info(f"{res.status_code}: Error during page editing")
