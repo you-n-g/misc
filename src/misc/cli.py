@@ -35,6 +35,7 @@ def check_health(p: Path) -> None:
 def start_teleread(
     channel: str,
     dirname: str,
+    *,
     reg: Optional[str] = None,
     watch: bool = True,
 ) -> None:

@@ -34,7 +34,8 @@ class TeleRead(BaseSettings):
 
 
 class Notion(BaseSettings):
-    """Notion settings"""
+    """Notion settings."""
+
     secrets: str
     page_id: str  # the page to be edited
     page_pos_id: str  # the position of the page to be edited
@@ -48,10 +49,10 @@ global_settings = GlobalSettings()
 
 
 def get_env_file(name: str) -> Optional[str]:
-    """The environ path from dot directory"""
+    """The environ path from dot directory."""
     _env_file = f"~/.dotfiles/{name}"
     if Path(_env_file).expanduser().exists():
-        logging.warning(f"loading environtment file from `{_env_file}`")
+        logging.warning(f"loading environtment file from `%s`", _env_file)
     else:
         _env_file = None
     return _env_file
