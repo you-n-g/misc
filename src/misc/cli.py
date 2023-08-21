@@ -6,6 +6,7 @@ from typing import Optional
 import typer
 import wan
 from loguru import logger
+
 from misc.incu.pack import locate_pack
 
 app = typer.Typer()
@@ -28,7 +29,12 @@ def check_health(p: Path) -> None:
 
 
 @app.command()
-def start_teleread(channel: str, dirname: str, reg: Optional[str] = None, watch: bool = True) -> None:
+def start_teleread(
+    channel: str,
+    dirname: str,
+    reg: Optional[str] = None,
+    watch: bool = True,
+) -> None:
     from misc.teleread.server import FileManager
 
     if watch:
@@ -62,24 +68,28 @@ def notion_routine():
     headers = {
         "Authorization": "Bearer " + NOTIONSETTINGS.secrets,
         "Content-Type": "application/json",
-        "Notion-Version":
-            "2022-06-28",  # Check what is the latest version here: https://developers.notion.com/reference/changes-by-version
+        "Notion-Version": "2022-06-28",  # Check what is the latest version here: https://developers.notion.com/reference/changes-by-version
     }
 
     import datetime
-    cn_time_str = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).strftime("%Y-%m-%d")
+
+    cn_time_str = (datetime.datetime.utcnow() + datetime.timedelta(hours=8)).strftime(
+        "%Y-%m-%d",
+    )
 
     def get_text(text=""):
         return {
             "object": "block",
             "type": "paragraph",
             "paragraph": {
-                "rich_text": [{
-                    "type": "text",
-                    "text": {
-                        "content": text,
+                "rich_text": [
+                    {
+                        "type": "text",
+                        "text": {
+                            "content": text,
+                        },
                     },
-                },]
+                ],
             },
         }
 
