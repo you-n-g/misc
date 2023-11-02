@@ -106,7 +106,6 @@ def notion_routine() -> None:
         ],
         "after": NOTIONSETTINGS.page_pos_id,  # adjusting the position of the content.
     }
-    # NOTE: Notino's will add part of the page name into url. But it is not the page id.
     page_block_id = NOTIONSETTINGS.page_id
 
     edit_page(page_block_id, blocks)

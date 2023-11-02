@@ -36,7 +36,11 @@ class TeleRead(BaseSettings):
 class Notion(BaseSettings):
     """Notion settings."""
 
+    # NOTE:
+    # - You have to create new internal integrations for each workspace "Develp or manage integrations"
+    # - You have to add the connection to specific page to make it works.
     secrets: str
+    # NOTE: Notion's will add part of the page name into url. But it is not the page id.
     page_id: str  # the page to be edited
     page_pos_id: str  # the position of the page to be edited
 
