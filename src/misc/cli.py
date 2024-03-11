@@ -41,9 +41,15 @@ def start_teleread(
 ) -> None:
     """Tele read service."""
     from misc.teleread.server import FileManager
+    from telethon.errors import TimedOutError
 
     if watch:
-        FileManager(channel, dirname, reg).start()
+        while True:
+            try:
+                FileManager(channel, dirname, reg).start()
+            except TimedOutError:
+                print("TimedOutError: The request to the server timed out.")
+            time.sleep(60)
     else:
         FileManager(channel, dirname, reg).update()
 
