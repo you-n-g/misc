@@ -6,6 +6,7 @@
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 import re
+import yaml
 from typing import Optional
 
 import telethon
@@ -18,10 +19,12 @@ from misc.settings import TELEREADSETTINGS
 
 class FileManager:
 
-    def __init__(self, channel: str, dirname: str, reg: Optional[str] = None) -> None:
+    def __init__(self, channel: str, dirname: str, reg: Optional[str] = None, days: int = 60) -> None:
         self.channel, self.dirname = channel, dirname
         self.reg = re.compile(reg) if reg is not None else None
-        self.client = self.get_client(dirname)
+        # You will prompt to input your +86 phone. And then your telegram will receive a code.
+        self.client = self.get_client(dirname)  # TODO: why can't I share clients
+        self.days = days  # when updating records. How many days do we go back?
 
     @staticmethod
     def get_client(dirname):
@@ -37,6 +40,8 @@ class FileManager:
             if isinstance(at, DocumentAttributeFilename):
                 fname = f"{date_str} {at.file_name}"
                 break
+        if fname is None:
+            return # if the media does not have filename, we skip it.
         assert fname is not None
         assert at is not None
 
@@ -48,6 +53,21 @@ class FileManager:
         elif self.reg is not None and self.reg.match(at.file_name) is None:
             print(f"skip {fname} due to fail to match {self.reg}")
         else:
+            # # Forward the message to chat_id
+            # config_path: str = "~/.dotfiles/.notifiers.yaml"
+            # path = Path(config_path).expanduser()
+            # with path.open() as f:
+            #     config = yaml.load(f, Loader=yaml.FullLoader)
+            # chat_id = int(config["kwargs"]["chat_id"])
+            # # TODO: get EntityLike object based on chat_id
+            # entity = await self.client.get_entity()
+            try:
+                entity = await self.client.get_me()
+                await self.client.forward_messages(entity, message)
+                print(f"Message forwarded to {entity}")
+            except Exception as e:
+                print(f"Failed to forward message: {e}")
+
             print(f"downloading {fname}")
             # NOTE: we have to add a progress_callback in case of Timedout error..
             import time
@@ -79,7 +99,7 @@ class FileManager:
             client.loop.run_until_complete(update_data_to_recent())
         """
         async for message in self.client.iter_messages(self.channel):
-            if datetime.now(tz=timezone.utc) - message.date > timedelta(days=60):
+            if datetime.now(tz=timezone.utc) - message.date > timedelta(days=self.days):
                 break
             # Get replies and walk through them
             try:
@@ -90,12 +110,15 @@ class FileManager:
             await self.download_message_media(message)
 
     async def new_message_handler(self, event):
-        if event.message.file:
-            await self.download_message_media(event.message)
+        # The file is now in the comments now.
+        # if event.message.file:
+        #     await self.download_message_media(event.message)
+        await self.update_data_to_recent()
 
     def start(self):
         self.client.on(events.NewMessage(chats=self.channel))(self.new_message_handler)
         self.client.start()
+        print("run_until_disconnected")
         self.client.run_until_disconnected()
 
     def update(self):

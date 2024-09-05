@@ -38,6 +38,7 @@ def start_teleread(
     *,
     reg: Optional[str] = None,
     watch: bool = True,
+    days: int = 60,
 ) -> None:
     """Tele read service."""
     from misc.teleread.server import FileManager
@@ -46,12 +47,12 @@ def start_teleread(
     if watch:
         while True:
             try:
-                FileManager(channel, dirname, reg).start()
+                FileManager(channel, dirname, reg, days=days).start()
             except TimedOutError:
                 print("TimedOutError: The request to the server timed out.")
             time.sleep(60)
     else:
-        FileManager(channel, dirname, reg).update()
+        FileManager(channel, dirname, reg, days=days).update()
 
 
 @app.command()
