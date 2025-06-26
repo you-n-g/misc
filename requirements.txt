@@ -5,4 +5,4 @@ python-dotenv
 requests
 telethon
 typer[all]
-wan @ git+https://github.com/you-n-g/wan.git@master
+wanot
